@@ -1,0 +1,37 @@
+name: biathlonFlade
+version: '${project.version}'
+main: org.bevl.biathlon.biathlonflade.BiathlonFlade
+api-version: '1.18'
+commands:
+  addToRace:
+    description: Your description
+    usage: /addToRace
+    permission: BIATHLON.flagrate
+  setCountry:
+    description: Set country for player
+    usage: /setCountry
+    permission: BIATHLON.flagrate
+  listCountries:
+    description: Show all countries
+    usage: /listCountries
+    permission: BIATHLON.flagrate
+  login:
+    description: You can log in
+    usage: /login
+    permission: BIATHLON.flagrate
+  biatItems:
+    description: You can get biathlon items
+    usage: /biatItems
+    permission: BIATHLON.flagrate
+permissions :
+  BIATHLON.*:
+    description: Gives access to all Inferno commands
+    children:
+      BIATHLON.flagrate: true
+      BIATHLON.burningdeaths: true
+  BIATHLON.flagrate:
+    description: Allows you to ignite yourself
+    default: true
+  BIATHLON.burningdeaths:
+    description: Allows you to see how many times you have burned to death
+    default: true
