@@ -31,10 +31,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.bukkit.event.inventory.InventoryAction.*;
@@ -42,6 +39,7 @@ import static org.bukkit.event.inventory.InventoryAction.*;
 public class AllListeners implements Listener {
 
     Utli utli = new Utli();
+    CheckPoints checkPoints = new CheckPoints();
     ShootingSystem shootingSystem = new ShootingSystem();
 
     ArrayList<String> Time = new ArrayList<String>();
@@ -111,13 +109,17 @@ public class AllListeners implements Listener {
     public void onMove(PlayerMoveEvent event) {
         final Player player = event.getPlayer();
 
+
         if (utli.isLoggedIn(player.getName())) {
+            long currentTime = System.currentTimeMillis();
+            checkPoints.Check(player);
+
+        }
+        else if (!utli.isLoggedIn(player.getName())) {
+
             event.setCancelled(true);
             player.sendMessage("§aAuth §7>> §6Login | §4/login (Passwort)");
             return;
-        }
-        else if (!utli.isLoggedIn(player.getName())) {
-            event.setCancelled(true);
         }
 
         if (Time.contains(player.getName())) {

@@ -23,6 +23,14 @@ commands:
     description: You can get biathlon items
     usage: /biatItems
     permission: BIATHLON.flagrate
+  setCheckPoint:
+    description: You can set checkPoint
+    usage: /setCheckPoint
+    permission: BIATHLON.flagrate
+  setStartPoint:
+    description: You can set start position
+    usage: /setStartPoint
+    permission: BIATHLON.flagrate
 permissions :
   BIATHLON.*:
     description: Gives access to all Inferno commands
