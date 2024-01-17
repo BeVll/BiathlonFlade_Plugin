@@ -22,14 +22,14 @@ public class SetCheckPoint implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         try {
-            if(args.length != 8){
-                sender.sendMessage("§3/setCheckPoint §6[id] [name] [x1] [y1] [z1] [x2] [y2] [z2]");
+            if(args.length != 9){
+                sender.sendMessage("§3/setCheckPoint §6[trackId] [name] [type:start|checkpoint|finish|entryPenalty|exitPenalty] [x1] [y1] [z1] [x2] [y2] [z2]");
             }
             else{
 
 
                 CheckPoint checkPoint = new CheckPoint();
-                checkPoint.Id = Integer.parseInt(args[0]);
+
                 checkPoint.name = args[1];
                 checkPoint.X1 = Double.parseDouble(args[2]);
                 checkPoint.Y1 = Double.parseDouble(args[3]);
@@ -37,7 +37,7 @@ public class SetCheckPoint implements CommandExecutor {
                 checkPoint.X2 = Double.parseDouble(args[5]);
                 checkPoint.Y2 = Double.parseDouble(args[6]);
                 checkPoint.Z2 = Double.parseDouble(args[7]);
-                checkPoint.type = "checkpoint";
+                checkPoint.type = args[2];
                 checkPoints.addCheckPoint(checkPoint);
                 checkPoints.updateCheckPointsFile();
                 String res = String.format("§2Created check point §3[%s] %s §2with vectors: §3%s %s %s AND %s %s %s", checkPoint.Id, checkPoint.name, checkPoint.X1, checkPoint.Y1, checkPoint.Z1, checkPoint.X2, checkPoint.Y2, checkPoint.Z2);

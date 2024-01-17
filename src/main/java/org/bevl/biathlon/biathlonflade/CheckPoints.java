@@ -114,8 +114,6 @@ public class CheckPoints {
                     lastTriggerTimeMap.put(player, currentTime);
 
                     List<PlayerRace> playerRacesList = playersRace.stream().filter(r -> r.player == player).collect(Collectors.toList());
-                    player.sendMessage("checkpoint");
-                    player.sendMessage(Integer.toString(playerRacesList.size()));
                     if(!playerRacesList.isEmpty()){
                         PlayerRace playerRace = playerRacesList.get(0);
                         if(Objects.equals(cP.type, "start")){

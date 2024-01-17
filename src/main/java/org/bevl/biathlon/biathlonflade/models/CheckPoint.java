@@ -3,6 +3,7 @@ package org.bevl.biathlon.biathlonflade.models;
 public class CheckPoint {
     public int Id;
     public String name;
+    public int trackId;
     public String type;
     public Double X1;
     public Double Y1;

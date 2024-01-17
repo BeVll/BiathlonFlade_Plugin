@@ -35,12 +35,10 @@ public class Login implements CommandExecutor {
                 sender.sendMessage("§aAuth §7>> §aYou are logged!");
             }
 
-            Bukkit.broadcastMessage(response.toString());
-            System.out.print(response.toString());
+            Bukkit.getLogger().info(response.toString());
             return true;
         } catch (Exception exception){
-            System.out.print(exception.toString());
-            Bukkit.broadcastMessage(exception.toString());
+            Bukkit.getLogger().info(exception.toString());
             return false;
         }
     }

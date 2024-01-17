@@ -1,15 +1,16 @@
 package org.bevl.biathlon.biathlonflade;
 
+import com.comphenix.protocol.ProtocolLibrary;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.bevl.biathlon.biathlonflade.models.Country;
 import org.bevl.biathlon.biathlonflade.models.ReloadPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,6 +18,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -44,7 +46,6 @@ public class AllListeners implements Listener {
 
     ArrayList<String> Time = new ArrayList<String>();
 
-
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         try {
@@ -61,22 +62,17 @@ public class AllListeners implements Listener {
                         .build();
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
+                if(response.statusCode() == 200){
 
-                        if(response.statusCode() == 200){
-
-                            Gson gson = new GsonBuilder().create();
+                    Gson gson = new GsonBuilder().create();
 
                     Country country = gson.fromJson(response.body(), Country.class);
 
                     player.setPlayerListName(country.character + player.getName());
                     player.saveData();
                     player.sendMessage(country.character + " " + country.name + " is your country!");
-                            Bukkit.broadcastMessage(response.body());
-                        }
-
-
-
-
+                    Bukkit.getLogger().info(response.body());
+                }
 
                 player.sendMessage("§aAuth §7>> §6Login | §4/login (Password)");
             } else {
@@ -84,7 +80,7 @@ public class AllListeners implements Listener {
             }
 
         } catch (Exception exception){
-
+            Bukkit.getLogger().info(exception.getMessage());
         }
 
     }
@@ -152,6 +148,20 @@ public class AllListeners implements Listener {
         Player player = event.getPlayer();
         if (!utli.isLoggedIn(player.getName())) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerItemHeld(PlayerItemHeldEvent event) {
+        Player player = event.getPlayer();
+        int newSlot = event.getNewSlot();
+
+        // Check if the new item in hand is a bow
+        ItemStack item = player.getInventory().getItem(newSlot);
+        if (item != null && item.getType() == Material.BOW) {
+            shootingSystem.simulateCrosshairJitter(player);
+        } else {
+            shootingSystem.removeCrosshairJitter(player);
         }
     }
 
@@ -242,6 +252,34 @@ public class AllListeners implements Listener {
                 event.setCancelled(true);
             }
         }
+    }
+
+
+
+    @EventHandler
+    public void onProjectileHit(ProjectileHitEvent event) {
+        if (event.getEntity() instanceof Arrow) {
+            Arrow arrow = (Arrow) event.getEntity();
+            Bukkit.getLogger().info(event.getHitBlock().getType().toString());
+            // Check if the arrow hit a wooden button
+            if (shootingSystem.arrowHitWoodenButton(arrow)) {
+                arrow.getWorld().strikeLightningEffect(arrow.getLocation()); // You can replace this with your desired action
+                Bukkit.broadcastMessage(ChatColor.GREEN + "Arrow hit the button!");
+                // Notify the player
+                if (arrow.getShooter() instanceof Player) {
+                    Player player = (Player) arrow.getShooter();
+                    player.sendMessage(ChatColor.GREEN + "Arrow hit the button!");
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    private void onArrowHitBlock(ArrowHitBlockEvent event) {
+        Arrow arrow = event.getArrow();
+        Block block = event.getBlock();
+
+        // the block that was hit
     }
 
     @EventHandler

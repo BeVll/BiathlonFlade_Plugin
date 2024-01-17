@@ -2,44 +2,66 @@ name: biathlonFlade
 version: '1.0-SNAPSHOT'
 main: org.bevl.biathlon.biathlonflade.BiathlonFlade
 api-version: '1.18'
+depend: [ProtocolLib]
 commands:
-  addToRace:
-    description: Your description
-    usage: /addToRace
-    permission: BIATHLON.flagrate
   setCountry:
     description: Set country for player
     usage: /setCountry
-    permission: BIATHLON.flagrate
+    permission: BIATHLON.helper
   listCountries:
     description: Show all countries
     usage: /listCountries
-    permission: BIATHLON.flagrate
+    permission: BIATHLON.player
   login:
     description: You can log in
     usage: /login
-    permission: BIATHLON.flagrate
+    permission: BIATHLON.player
   biatItems:
     description: You can get biathlon items
     usage: /biatItems
-    permission: BIATHLON.flagrate
+    permission: BIATHLON.player
   setCheckPoint:
     description: You can set checkPoint
     usage: /setCheckPoint
-    permission: BIATHLON.flagrate
-  setStartPoint:
-    description: You can set start position
-    usage: /setStartPoint
-    permission: BIATHLON.flagrate
+    permission: BIATHLON.admin
+  setPenalty:
+    description: To enable penalty laps
+    usage: /setPenalty
+    permission: BIATHLON.helper
+  shootTimePenalty:
+    description: To set shooting time penalty
+    usage: /shootTimePenalty
+    permission: BIATHLON.helper
+  setLaps:
+    description: To set laps of race
+    usage: /setLaps
+    permission: BIATHLON.helper
+  additBullets:
+    description: Set additionals bullets
+    usage: /additBullets
+    permission: BIATHLON.helper
+  addStartList:
+    description: Add players to start list
+    usage: /addStartList
+    permission: BIATHLON.helper
 permissions :
   BIATHLON.*:
-    description: Gives access to all Inferno commands
+    description: Gives access to all Biathlon commands
     children:
-      BIATHLON.flagrate: true
-      BIATHLON.burningdeaths: true
-  BIATHLON.flagrate:
-    description: Allows you to ignite yourself
+      BIATHLON.player: true
+      BIATHLON.admin: true
+      BIATHLON.helper: true
+  BIATHLON.player:
+    description: Default player permissions
     default: true
-  BIATHLON.burningdeaths:
-    description: Allows you to see how many times you have burned to death
-    default: true
+  BIATHLON.admin:
+    description: Administrator
+    children:
+      BIATHLON.player: true
+      BIATHLON.helper: true
+    default: false
+  BIATHLON.helper:
+    description: Helper
+    default: false
+    children:
+      BIATHLON.player: true
