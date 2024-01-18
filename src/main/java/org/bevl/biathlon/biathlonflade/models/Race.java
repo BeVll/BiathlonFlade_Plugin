@@ -7,9 +7,11 @@ import java.util.List;
 
 public class Race {
     public int Id;
-    public List<Player> startList;
+    public Event event;
+    public List<String> startList;
+    public boolean isGoing;
 
     public Race(){
-        startList = new ArrayList<Player>();
+        startList = new ArrayList<String>();
     }
 }

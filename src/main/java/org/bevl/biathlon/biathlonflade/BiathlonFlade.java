@@ -28,11 +28,9 @@ public final class BiathlonFlade extends JavaPlugin {
         raceSettings = new RaceSettings();
         CheckPoints checkPoints = new CheckPoints();
         utli.createCustomConfig();
-        try {
-            checkPoints.createCheckPointsFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
+            checkPoints.updateCheckPoints();
+
         if (getServer().getPluginManager().getPlugin("ProtocolLib") == null) {
             getLogger().severe("ProtocolLib not found! Disabling your plugin.");
             getServer().getPluginManager().disablePlugin(this);
@@ -52,6 +50,7 @@ public final class BiathlonFlade extends JavaPlugin {
         this.getCommand("setLaps").setExecutor(new SetLaps());
         this.getCommand("additBullets").setExecutor(new SetLaps());
         this.getCommand("addStartList").setExecutor(new AddStartList());
+        this.getCommand("startRace").setExecutor(new StartRace());
     }
 
     @Override

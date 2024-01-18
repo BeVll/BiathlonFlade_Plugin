@@ -44,6 +44,10 @@ commands:
     description: Add players to start list
     usage: /addStartList
     permission: BIATHLON.helper
+  startRace:
+    description: Add players to start list
+    usage: /addStartList
+    permission: BIATHLON.helper
 permissions :
   BIATHLON.*:
     description: Gives access to all Biathlon commands

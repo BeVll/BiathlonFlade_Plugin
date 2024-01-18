@@ -24,12 +24,12 @@ public class AddStartList implements CommandExecutor {
 
         try {
             for (int i = 0; i < players.length; i++) {
-                Player p = BiathlonFlade.plugin.getServer().getPlayer(players[i]);
-                if(p == null){
-                    sender.sendMessage("§4Player " + players[i] + " not found");
-                    return false;
-                }
-                BiathlonFlade.race.startList.add(p);
+//                Player p = BiathlonFlade.plugin.getServer().getPlayer(players[i]);
+//                if(p == null){
+//                    sender.sendMessage("§4Player " + players[i] + " not found");
+//                    return false;
+//                }
+                BiathlonFlade.race.startList.add(players[i]);
 
             }
 
@@ -48,7 +48,7 @@ public class AddStartList implements CommandExecutor {
                 int seconds = totalTimeInSeconds % 60;
                 String formattedTime = df.format(minutes) + ":" + df.format(seconds);
 
-                Score s = objective.getScore("§4" + (i+1) + ".§6" +BiathlonFlade.race.startList.get(i).getName() + " §c" + formattedTime);
+                Score s = objective.getScore("§c" + (i+1) + ".§6" +BiathlonFlade.race.startList.get(i));
                 s.setScore(BiathlonFlade.race.startList.size()-i);
 
                 totalTimeInSeconds += 30;

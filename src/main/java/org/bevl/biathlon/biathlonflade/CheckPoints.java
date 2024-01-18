@@ -10,11 +10,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.io.*;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class CheckPoints {
-    private static ArrayList<CheckPoint> checkPoints = new ArrayList<CheckPoint>();
+    private static List<CheckPoint> checkPoints = new ArrayList<CheckPoint>();
     public static List<PlayerRace> playersRace = new ArrayList<>();
     private Map<Player, Long> lastTriggerTimeMap = new HashMap<>();
     private final long triggerCooldown = 2 * 1000;
@@ -34,50 +38,64 @@ public class CheckPoints {
         return timeFormat;
     }
 
-    public void createCheckPointsFile() throws IOException {
-        File file = new File(BiathlonFlade.plugin.getDataFolder() + File.separator + "checkpoints.json"); //This will get the config file
+//    public void createCheckPointsFile() throws IOException {
+//        File file = new File(BiathlonFlade.plugin.getDataFolder() + File.separator + "checkpoints.json"); //This will get the config file
+//
+//
+//        if (!file.exists()) {
+//            Gson gson = new GsonBuilder().create();
+//
+//            String jsonFile = gson.toJson(checkPoints);
+//            BufferedWriter writer = new BufferedWriter(new FileWriter(BiathlonFlade.plugin.getDataFolder() + File.separator + "checkpoints.json"));
+//            writer.write(jsonFile);
+//            writer.close();
+//
+//
+//        } else {
+//            BufferedReader br
+//                    = new BufferedReader(new FileReader(file));
+//
+//            // Declaring a string variable
+//            String json = "";
+//            String st;
+//            while ((st = br.readLine()) != null)
+//                 json += st;
+//            Bukkit.getLogger().info(json);
+//            Gson gson = new GsonBuilder().create();
+//
+//            CheckPoint[] fromJson = gson.fromJson(json, CheckPoint[].class);
+//            for (int i = 0; i < fromJson.length; i++) {
+//                checkPoints.add(fromJson[i]);
+//            }
+//
+//            Bukkit.getLogger().info(Integer.toString(checkPoints.size()));
+//        }
+//    }
 
+    public void updateCheckPoints() {
+        try{
+            HttpClient client = HttpClient.newHttpClient();
 
-        if (!file.exists()) {
             Gson gson = new GsonBuilder().create();
 
-            String jsonFile = gson.toJson(checkPoints);
-            BufferedWriter writer = new BufferedWriter(new FileWriter(BiathlonFlade.plugin.getDataFolder() + File.separator + "checkpoints.json"));
-            writer.write(jsonFile);
-            writer.close();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .header("Content-Type", "application/json")
+                    .uri(URI.create("http://192.168.1.28:45456/api/checkPoints/all"))
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
 
-        } else {
-            BufferedReader br
-                    = new BufferedReader(new FileReader(file));
+            if(response.statusCode() == 200){
 
-            // Declaring a string variable
-            String json = "";
-            String st;
-            while ((st = br.readLine()) != null)
-                 json += st;
-            Bukkit.getLogger().info(json);
-            Gson gson = new GsonBuilder().create();
+                CheckPoint[] checkPointEntity = gson.fromJson(response.body(), CheckPoint[].class);
+                checkPoints = Arrays.stream(checkPointEntity).toList();
+                Bukkit.getLogger().info(response.body());
 
-            CheckPoint[] fromJson = gson.fromJson(json, CheckPoint[].class);
-            for (int i = 0; i < fromJson.length; i++) {
-                checkPoints.add(fromJson[i]);
             }
+        } catch (Exception ex){
 
-            Bukkit.getLogger().info(Integer.toString(checkPoints.size()));
         }
-    }
-
-    public void updateCheckPointsFile() throws IOException {
-        File file = new File(BiathlonFlade.plugin.getDataFolder() + File.separator + "checkpoints.json"); //This will get the config file
-
-
-        Gson gson = new GsonBuilder().create();
-
-        String jsonFile = gson.toJson(checkPoints);
-        BufferedWriter writer = new BufferedWriter(new FileWriter(BiathlonFlade.plugin.getDataFolder() + File.separator + "checkpoints.json"));
-        writer.write(jsonFile);
-        writer.close();
     }
 
     public List<CheckPoint> getCheckPoints() {
@@ -108,7 +126,7 @@ public class CheckPoints {
             Double y = player.getLocation().getY();
             Double z = player.getLocation().getZ();
 
-            if(isValueInRange(x, cP.X1, cP.X2) && isValueInRange(y, cP.Y1, cP.Y2) && isValueInRange(z, cP.Z1, cP.Z2)){
+            if(isValueInRange(x, cP.x1, cP.x2) && isValueInRange(y, cP.y1, cP.y2) && isValueInRange(z, cP.z1, cP.z2)){
                 long currentTime = System.currentTimeMillis();
                 if (!lastTriggerTimeMap.containsKey(player) || (currentTime - lastTriggerTimeMap.get(player)) >= triggerCooldown) {
                     lastTriggerTimeMap.put(player, currentTime);
@@ -116,7 +134,7 @@ public class CheckPoints {
                     List<PlayerRace> playerRacesList = playersRace.stream().filter(r -> r.player == player).collect(Collectors.toList());
                     if(!playerRacesList.isEmpty()){
                         PlayerRace playerRace = playerRacesList.get(0);
-                        if(Objects.equals(cP.type, "start")){
+                        if(cP.checkPointTypeId == 2){
                             int index = playerRacesList.indexOf(playerRace);
 
                             playerRace.startTime = System.currentTimeMillis();
@@ -124,18 +142,18 @@ public class CheckPoints {
                             player.sendMessage(String.format("§b[%s] §6%s", cP.name, player.getName()));
 
                         }
-                        else if(Objects.equals(cP.type, "checkpoint")){
+                        else if(cP.checkPointTypeId == 1){
                             PlayerCheckPoint playerCheckPoint = new PlayerCheckPoint();
                             playerCheckPoint.Id = cP.Id;
                             playerCheckPoint.name = cP.name;
-                            playerCheckPoint.X1 = cP.X1;
-                            playerCheckPoint.Y1 = cP.Y1;
-                            playerCheckPoint.Z1 = cP.Z1;
-                            playerCheckPoint.X2 = cP.X2;
-                            playerCheckPoint.Y2 = cP.Y2;
-                            playerCheckPoint.Z2 = cP.Z2;
+                            playerCheckPoint.x1 = cP.x1;
+                            playerCheckPoint.y1 = cP.y1;
+                            playerCheckPoint.z1 = cP.z1;
+                            playerCheckPoint.x2 = cP.x2;
+                            playerCheckPoint.y2 = cP.y2;
+                            playerCheckPoint.z2 = cP.z2;
                             playerCheckPoint.resultTime = System.currentTimeMillis() - playerRace.startTime;
-                            playerCheckPoint.type = cP.type;
+                            playerCheckPoint.checkPointTypeId = cP.checkPointTypeId;
                             int index = playerRacesList.indexOf(playerRace);
                             playerRacesList.set(index, playerRace);
                             player.sendMessage(String.format("§b[%s] §6%s §4%s", cP.name, player.getName(), convertToTimeFormat(playerCheckPoint.resultTime)));
@@ -143,8 +161,8 @@ public class CheckPoints {
                         }
                     }
                     else{
-                        player.sendMessage(cP.type);
-                        if(Objects.equals(cP.type, "start")){
+
+                        if(cP.checkPointTypeId == 2){
                             player.sendMessage("1321");
                             PlayerRace playerRace = new PlayerRace();
                             playerRace.player = player;

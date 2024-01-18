@@ -1,7 +1,6 @@
-package org.bevl.biathlon.biathlonflade.models;
+package org.bevl.biathlon.biathlonflade.requests.checkpoint;
 
-public class CheckPoint {
-    public int Id;
+public class CheckPointCreate {
     public String name;
     public int trackId;
     public int checkPointTypeId;
@@ -11,6 +10,4 @@ public class CheckPoint {
     public Double x2;
     public Double y2;
     public Double z2;
-
-
 }

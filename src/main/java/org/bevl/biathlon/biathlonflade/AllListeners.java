@@ -58,7 +58,7 @@ public class AllListeners implements Listener {
 
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("http://192.168.1.28:45456/user/country?&userName="+player.getName()))
+                        .uri(URI.create("http://192.168.1.28:45456/users/country?&userName="+player.getName()))
                         .build();
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
