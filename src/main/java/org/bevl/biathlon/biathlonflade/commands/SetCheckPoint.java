@@ -22,11 +22,17 @@ public class SetCheckPoint implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         try {
             if(args.length != 9){
-                sender.sendMessage("§3/setCheckPoint §6[trackId] [name] [type:start|checkpoint|finish|entryPenalty|exitPenalty] [x1] [y1] [z1] [x2] [y2] [z2]");
+                sender.sendMessage("§3/setCheckPoint §6[trackId] [name] [type:start|checkpoint|finish|entrypenalty|exitpenalty|entryshoot|exitshoot] [x1] [y1] [z1] [x2] [y2] [z2]");
             }
             else{
-                if(!Objects.equals(args[2], "start") && !Objects.equals(args[2], "checkpoint") && !Objects.equals(args[2], "finish") && !Objects.equals(args[2], "entryPenalty") && !Objects.equals(args[2], "exitPenalty")){
-                    sender.sendMessage("§3/setCheckPoint §6[trackId] [name] [type:start|checkpoint|finish|entryPenalty|exitPenalty] [x1] [y1] [z1] [x2] [y2] [z2]");
+                if(!Objects.equals(args[2], "start")
+                        && !Objects.equals(args[2], "checkpoint")
+                        && !Objects.equals(args[2], "finish")
+                        && !Objects.equals(args[2], "entrypenalty")
+                        && !Objects.equals(args[2], "exitpenalty")
+                        && !Objects.equals(args[2], "entryshoot")
+                        && !Objects.equals(args[2], "exitshoot")){
+                    sender.sendMessage("§3/setCheckPoint §6[trackId] [name] [type:start|checkpoint|finish|entrypenalty|exitpenalty|entryshoot|exitshoot] [x1] [y1] [z1] [x2] [y2] [z2]");
                     return true;
                 }
 
@@ -41,6 +47,28 @@ public class SetCheckPoint implements CommandExecutor {
                         checkPoint.checkPointTypeId = 2;
                         break;
                     }
+                    case "finish":{
+                        checkPoint.checkPointTypeId = 3;
+                        break;
+                    }
+                    case "entrypenalty":{
+                        checkPoint.checkPointTypeId = 4;
+                        break;
+                    }
+                    case "exitpenalty":{
+                        checkPoint.checkPointTypeId = 5;
+                        break;
+                    }
+                    case "entryshoot":{
+                        checkPoint.checkPointTypeId = 6;
+                        break;
+                    }
+                    case "exitshoot":{
+                        checkPoint.checkPointTypeId = 7;
+                        break;
+                    }
+
+
                 }
 
                 checkPoint.trackId = Integer.parseInt(args[0]);
@@ -70,7 +98,7 @@ public class SetCheckPoint implements CommandExecutor {
                 if(response.statusCode() == 200){
 
                     CheckPoint checkPointEntity = gson.fromJson(response.body(), CheckPoint.class);
-                    String res = String.format("§2Created check point §3[%s] %s §2with vectors: §3%s %s %s AND %s %s %s", checkPointEntity.Id, checkPointEntity.name, checkPointEntity.x1, checkPointEntity.y1, checkPointEntity.z1, checkPointEntity.x2, checkPointEntity.y2, checkPointEntity.z2);
+                    String res = String.format("§2Created check point §3[%s] %s §2with vectors: §3%s %s %s AND %s %s %s", checkPointEntity.id, checkPointEntity.name, checkPointEntity.x1, checkPointEntity.y1, checkPointEntity.z1, checkPointEntity.x2, checkPointEntity.y2, checkPointEntity.z2);
                     Bukkit.getLogger().info(response.body());
                     sender.sendMessage(res);
                 }

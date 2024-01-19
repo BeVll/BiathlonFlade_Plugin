@@ -1,7 +1,7 @@
 package org.bevl.biathlon.biathlonflade.models;
 
 public class CheckPoint {
-    public int Id;
+    public int id;
     public String name;
     public int trackId;
     public int checkPointTypeId;
